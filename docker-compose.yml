@@ -1,0 +1,27 @@
+version: '3.8' # Or a compatible version like '3.3', '3.5', '3.7'
+services:
+  wordpress:
+    image: wordpress:latest # Uses the official WordPress image
+    depends_on:
+      - db # Ensures the database service starts before WordPress
+    ports:
+      - "80:80" # Maps host port 80 to container port 80 for web access
+    environment:
+      WORDPRESS_DB_HOST: db:3306 # Hostname and port for the database service
+      WORDPRESS_DB_USER: wordpress # Database user
+      WORDPRESS_DB_PASSWORD: your_strong_password # Database password
+      WORDPRESS_DB_NAME: wordpress_db # Database name
+    volumes:
+      - ./wp-content:/var/www/html/wp-content # Persists WordPress content (themes, plugins, uploads)
+    restart: always # Restarts the container automatically if it stops
+
+  db:
+    image: mysql:5.7 # Or mariadb:latest for MariaDB
+    environment:
+      MYSQL_ROOT_PASSWORD: your_root_password # Root password for MySQL
+      MYSQL_DATABASE: wordpress_db # Database name (must match WORDPRESS_DB_NAME)
+      MYSQL_USER: wordpress # Database user (must match WORDPRESS_DB_USER)
+      MYSQL_PASSWORD: your_strong_password # Database password (must match WORDPRESS_DB_PASSWORD)
+    volumes:
+      - ./db_data:/var/lib/mysql # Persists database data
+    restart: always # Restarts the container automatically if it stops
